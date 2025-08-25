@@ -1,0 +1,54 @@
+### Java / Spring Boot ###
+/target/            # Maven/Gradle 빌드 산출물
+/build/             # Gradle 빌드 산출물
+*.class
+*.jar
+*.war
+*.ear
+
+### Gradle ###
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar  # wrapper JAR은 버전에 필요하니 제외하지 않음
+
+### Maven ###
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA / Eclipse / VSCode ###
+*.iml
+.idea/
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+.vscode/
+
+### Logs ###
+*.log
+logs/
+*.out
+
+### OS 관련 ###
+.DS_Store
+Thumbs.db
+
+### React / Node.js ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+.cache/
+.next/              # Next.js 사용 시
+out/                # Next.js export
+dist/               # Vite, CRA 등 빌드 산출물
+
+### React 빌드 결과 ###
+frontend/build/     # CRA 빌드 산출물 (Spring static에 복사하기 전)
+
+### Environment files ###
+.env
+.env.local
+.env.*.local
