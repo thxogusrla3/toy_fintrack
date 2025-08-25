@@ -2,6 +2,7 @@ package com.thkim.toyproject.fintrack.infrastructure.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -33,13 +34,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests(auth -> auth      // ← 5.x는 authorizeRequests/antMatchers
-                        .antMatchers(
-                                "/api/auth/login",
-                                "/api/auth/refresh",
-                                "/api/auth/logout",
-                                "/actuator/health"
-                        ).permitAll()
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((req,res,e)->{ System.out.println("[401] "+req.getMethod()+" "+req.getRequestURI()+" "+e.getMessage()); res.sendError(401); })
+                        .accessDeniedHandler((req,res,e)->{ System.out.println("[403] "+req.getMethod()+" "+req.getRequestURI()+" "+e.getMessage()); res.sendError(403); })
+                )
+                .authorizeRequests(auth -> auth
+                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .antMatchers("/api/auth/login","/api/auth/refresh","/api/auth/logout","/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
