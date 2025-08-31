@@ -35,8 +35,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((req,res,e)->{ System.out.println("[401] "+req.getMethod()+" "+req.getRequestURI()+" "+e.getMessage()); res.sendError(401); })
-                        .accessDeniedHandler((req,res,e)->{ System.out.println("[403] "+req.getMethod()+" "+req.getRequestURI()+" "+e.getMessage()); res.sendError(403); })
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            System.out.println("[401] "+request.getMethod()+" "+request.getRequestURI()+" "+authException.getMessage()); response.sendError(401);
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            System.out.println("[403] "+request.getMethod()+" "+request.getRequestURI()+" "+accessDeniedException.getMessage()); response.sendError(403);
+                        })
                 )
                 .authorizeRequests(auth -> auth
                         .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -59,7 +63,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() { //Customizer.withDefaults() 이 설정으로 따로 @Bean으로 등록해줘야함.
         CorsConfiguration cfg = new CorsConfiguration();
         cfg.setAllowedOrigins(List.of("http://localhost:3000")); // 프론트 도메인
         cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));

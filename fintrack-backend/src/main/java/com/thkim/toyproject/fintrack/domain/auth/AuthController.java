@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -37,15 +39,28 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        var auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
+        );
 
         String access = jwt.createAccessToken(auth.getName(), auth.getAuthorities(), ACCESS_TTL);
         String refresh = jwt.createRefreshToken(auth.getName(), REFRESH_TTL);
-        store.saveOrRotate(auth.getName(), refresh);
 
+        store.saveOrRotate(auth.getName(), refresh);
         ResponseCookie cookie = JwtCookieUtil.refreshCookie(refresh, REFRESH_TTL, COOKIE_DOMAIN);
-        return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(Map.of("accessToken", access));
+
+        // 사용자의 권한(role) 정보를 추출
+        String userRole = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        // 응답 본문에 액세스 토큰과 함께 권한 정보를 추가
+        Map<String, String> body = Map.of(
+                "accessToken", access,
+                "role", userRole
+        );
+
+        return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(body);
     }
 
     @PostMapping("/refresh")
