@@ -93,6 +93,10 @@ public class SecurityTest {
         Cookie refreshCookie = extractCookie(login);
         assertThat(refreshCookie).isNotNull();
 
+        mvc.perform(get("/api/users/me")
+                        .header("Authorization", "Bearer " + access1))
+                .andExpect(status().isOk());
+
         MvcResult refresh1 = mvc.perform(post("/api/auth/refresh")
                 .cookie(refreshCookie))
                 .andExpect(status().isOk())
