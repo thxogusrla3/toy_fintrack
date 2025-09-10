@@ -2,13 +2,16 @@ package com.thkim.toyproject.fintrack.security;
 
 
 import com.jayway.jsonpath.JsonPath;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockCookie;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -117,5 +120,50 @@ public class SecurityTest {
                 .findFirst().orElse(null);
     }
 
+    @Test
+    @DisplayName("logout: refresh 쿠키 삭제 + 스토어 무효화 이후 refresh는 401")
+    void logout_should_clear_refresh_cookie_and_invalidate() throws Exception {
+        MvcResult login = mvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"" + USERNAME + "\", \"password\":\"" + PASSWORD + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(cookie().exists(REFRESH_TOKEN))
+                .andExpect(jsonPath("$.accessToken").exists())
+                .andReturn();
+
+        String access1 = JsonPath.read(login.getResponse().getContentAsString(), "$.accessToken");
+        assertThat(access1).isNotBlank();
+
+        Cookie refreshCookie = extractCookie(login, REFRESH_TOKEN);
+        assertThat(refreshCookie).isNotNull();
+
+        MvcResult logout = mvc.perform(post("/api/auth/logout")
+                .cookie(refreshCookie))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Set-Cookie", Matchers.containsString(REFRESH_TOKEN + "=")))
+                .andExpect(header().string("Set-Cookie", Matchers.anyOf(
+                        Matchers.containsString("Max-Age=0"),
+                        Matchers.containsString("Expires=")
+                        )))
+        .andReturn();
+
+        assertThat(logout.getResponse().getStatus()).isEqualTo(200);
+
+        mvc.perform(post("/api/auth/refresh")
+                .cookie(cloneCookie(refreshCookie)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    private Cookie extractCookie(MvcResult result, String name) {
+        result.getResponse().getCookies();
+        for (Cookie c : result.getResponse().getCookies()) {
+            if (name.equals(c.getName())) return c;
+        }
+        return null;
+    }
+
+    private Cookie cloneCookie(Cookie c) {
+        return new MockCookie(c.getName(), c.getValue());
+    }
 
 }
