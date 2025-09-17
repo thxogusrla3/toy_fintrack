@@ -17,13 +17,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        String role = user.getRole();
+        Role role = user.getRole();
 
         // ROLE_ 접두사 붙어있는지 체크하고 없으면 붙이기
-        if (!role.startsWith("ROLE_")) {
-            role = "ROLE_" + role;
-        }
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(role.asAuthority()));
     }
 
     @Override
