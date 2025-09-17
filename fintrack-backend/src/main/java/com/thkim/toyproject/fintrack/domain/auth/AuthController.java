@@ -1,5 +1,7 @@
 package com.thkim.toyproject.fintrack.domain.auth;
 
+import com.thkim.toyproject.fintrack.domain.users.SignupRequest;
+import com.thkim.toyproject.fintrack.domain.users.SignupResponse;
 import com.thkim.toyproject.fintrack.domain.users.User;
 import com.thkim.toyproject.fintrack.infrastructure.persistence.InMemoryRefreshTokenStore;
 import com.thkim.toyproject.fintrack.infrastructure.security.JwtCookieUtil;
@@ -14,12 +16,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -32,6 +32,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwt;
     private final InMemoryRefreshTokenStore store;
+    private final AuthService authService;
 
     private final long ACCESS_TTL = 60 * 15;             // 15m
     private final long REFRESH_TTL = 60L * 60 * 24 * 14;  // 14d
@@ -91,4 +92,11 @@ public class AuthController {
         ResponseCookie cookie = JwtCookieUtil.deleteRefreshCookie(COOKIE_DOMAIN);
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(Map.of("message","logged out"));
     }
+
+    @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SignupResponse signup(@Valid @RequestBody SignupRequest signupRequest) {
+        return authService.signup(signupRequest);
+    }
+
 }

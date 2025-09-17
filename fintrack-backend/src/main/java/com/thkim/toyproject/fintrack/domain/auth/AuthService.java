@@ -1,7 +1,6 @@
 package com.thkim.toyproject.fintrack.domain.auth;
 
-import com.thkim.toyproject.fintrack.domain.users.User;
-import com.thkim.toyproject.fintrack.domain.users.UserRepository;
+import com.thkim.toyproject.fintrack.domain.users.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void register(User registerTarget) {
+    public SignupResponse signup(SignupRequest registerTarget) {
         if(userRepository.existsByUserName(registerTarget.getUserName())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
@@ -28,11 +27,13 @@ public class AuthService {
             throw new IllegalArgumentException("이미 사용 중인 EMAIL 입니다.");
         }
 
-        User saveUser = new User();
-        saveUser.setUserName(registerTarget.getUserName());
-        saveUser.setEmail(registerTarget.getEmail());
-        saveUser.setPassword(passwordEncoder.encode(registerTarget.getPassword()));
-        saveUser.setRole("ADMIN");
+        User saveUser = new User(registerTarget.getUserName(), passwordEncoder.encode(registerTarget.getPassword()), registerTarget.getEmail());
         userRepository.save(saveUser);
+
+        return new SignupResponse(
+                saveUser.getId(),
+                saveUser.getUserName(),
+                saveUser.getPassword()
+                );
     }
 }
