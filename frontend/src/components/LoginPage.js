@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api'; // 생성한 axios 인스턴스 import
+import commonStyle from "../styles/commonStyles";
 
 function LoginPage() {
     const [username, setUsername] = useState('');
@@ -33,29 +33,30 @@ function LoginPage() {
 
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Id: </label>
+      <div style={commonStyle.container}>
+        <h2>로그인</h2>
+        <form id='login-form' onSubmit={handleSubmit} style={commonStyle.form}>
                 <input
                     type="text"
+                    placeholder="아이디"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                    style={commonStyle.input}
                 />
-            </div>
-            <div>
-                <label>Password: </label>
                 <input
                     type="password"
+                    placeholder="비밀번호"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    style={commonStyle.input}
                 />
-            </div>
-            <button type="submit">Login</button>
+            <button type="submit" style={commonStyle.button}>Login</button>
 
             <p onClick={goToRegister} style={{cursor: 'pointer', color: 'blue'}}>
                 회원가입
             </p>
         </form>
+      </div>
     );
 }
 
