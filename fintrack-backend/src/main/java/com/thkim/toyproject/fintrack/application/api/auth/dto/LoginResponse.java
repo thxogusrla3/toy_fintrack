@@ -1,4 +1,4 @@
-package com.thkim.toyproject.fintrack.domain.auth;
+package com.thkim.toyproject.fintrack.application.api.auth.dto;
 
 public class LoginResponse {
     private String token;

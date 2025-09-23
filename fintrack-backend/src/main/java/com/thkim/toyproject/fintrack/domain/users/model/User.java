@@ -1,10 +1,11 @@
-package com.thkim.toyproject.fintrack.domain.users;
+package com.thkim.toyproject.fintrack.domain.users.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -26,8 +27,13 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "role", nullable = false, length = 20)
     private Role role;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "email", nullable = false, updatable = false)
     private String email;
 
     public User(String userName, String password) {

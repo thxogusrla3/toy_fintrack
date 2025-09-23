@@ -1,5 +1,6 @@
 package com.thkim.toyproject.fintrack.domain.users;
 
+import com.thkim.toyproject.fintrack.domain.users.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

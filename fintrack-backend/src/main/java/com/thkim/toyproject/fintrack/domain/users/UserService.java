@@ -1,5 +1,7 @@
 package com.thkim.toyproject.fintrack.domain.users;
 
+import com.thkim.toyproject.fintrack.domain.users.model.User;
+
 import java.util.List;
 import java.util.Optional;
 

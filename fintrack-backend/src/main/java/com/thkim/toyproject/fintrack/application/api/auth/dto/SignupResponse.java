@@ -1,4 +1,4 @@
-package com.thkim.toyproject.fintrack.domain.users;
+package com.thkim.toyproject.fintrack.application.api.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

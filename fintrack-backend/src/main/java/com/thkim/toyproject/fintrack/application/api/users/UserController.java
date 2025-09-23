@@ -1,6 +1,8 @@
-package com.thkim.toyproject.fintrack.domain.users;
+package com.thkim.toyproject.fintrack.application.api.users;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.thkim.toyproject.fintrack.domain.users.UserService;
+import com.thkim.toyproject.fintrack.domain.users.UserServiceImpl;
+import com.thkim.toyproject.fintrack.domain.users.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")

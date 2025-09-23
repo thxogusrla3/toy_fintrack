@@ -1,6 +1,9 @@
 package com.thkim.toyproject.fintrack.domain.auth;
 
+import com.thkim.toyproject.fintrack.application.api.auth.dto.SignupRequest;
+import com.thkim.toyproject.fintrack.application.api.auth.dto.SignupResponse;
 import com.thkim.toyproject.fintrack.domain.users.*;
+import com.thkim.toyproject.fintrack.domain.users.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

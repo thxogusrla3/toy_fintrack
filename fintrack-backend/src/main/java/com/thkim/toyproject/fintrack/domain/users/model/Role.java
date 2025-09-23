@@ -1,4 +1,4 @@
-package com.thkim.toyproject.fintrack.domain.users;
+package com.thkim.toyproject.fintrack.domain.users.model;
 
 public enum Role {
     USER, ADMIN;

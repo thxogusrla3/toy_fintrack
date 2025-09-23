@@ -1,8 +1,9 @@
-package com.thkim.toyproject.fintrack.domain.auth;
+package com.thkim.toyproject.fintrack.application.api.auth;
 
-import com.thkim.toyproject.fintrack.domain.users.SignupRequest;
-import com.thkim.toyproject.fintrack.domain.users.SignupResponse;
-import com.thkim.toyproject.fintrack.domain.users.User;
+import com.thkim.toyproject.fintrack.domain.auth.AuthService;
+import com.thkim.toyproject.fintrack.application.api.auth.dto.LoginRequest;
+import com.thkim.toyproject.fintrack.application.api.auth.dto.SignupRequest;
+import com.thkim.toyproject.fintrack.application.api.auth.dto.SignupResponse;
 import com.thkim.toyproject.fintrack.infrastructure.persistence.InMemoryRefreshTokenStore;
 import com.thkim.toyproject.fintrack.infrastructure.security.JwtCookieUtil;
 import com.thkim.toyproject.fintrack.infrastructure.security.JwtTokenProvider;
@@ -11,11 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

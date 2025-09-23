@@ -1,5 +1,7 @@
 package com.thkim.toyproject.fintrack.domain.users;
 
+import com.thkim.toyproject.fintrack.domain.users.model.CustomUserDetails;
+import com.thkim.toyproject.fintrack.domain.users.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
