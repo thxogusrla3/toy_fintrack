@@ -20,11 +20,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "user_name", nullable = false, length = 20)
     private String userName;
 
     @Column(nullable = false, length = 100)
     private String password;
+
+    @Column(name = "email", nullable = false, updatable = false)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
@@ -33,8 +36,6 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "email", nullable = false, updatable = false)
-    private String email;
 
     public User(String userName, String password) {
         this(userName, password, Role.USER);
