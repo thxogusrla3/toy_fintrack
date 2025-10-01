@@ -44,9 +44,10 @@ public class SecurityConfig {
                 )
                 .authorizeRequests(auth -> auth
                         .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .antMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/actuator/health").permitAll()
+                        .antMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/actuator/health", "/api/auth/signup").permitAll()
                         .antMatchers("/api/admin/**").hasRole("ADMIN")
                         .antMatchers("/api/user/**").hasRole("USER")
+                        .antMatchers("/api/transactions/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
