@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api'; // 생성한 axios 인스턴스 import
+import api, {tokenStore} from '../services/api'; // 생성한 axios 인스턴스 import
 import commonStyle from "../styles/commonStyles";
 
-function LoginPage() {
+function LoginPage({ onLoginSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -20,14 +20,11 @@ function LoginPage() {
         });
 
         if(response.status === 200) {
-            const userRole = response.data.role;
-            if (userRole.includes("ROLE_ADMIN")) {
-                navigate("/admin");
-            } else {
-                navigate("/guest");
+            tokenStore.set(response.data.accessToken);
+            if (onLoginSuccess) { 
+                onLoginSuccess();
             }
-
-            alert('로그인 성공!');
+            navigate("/transaction/list");
         }
     };
 

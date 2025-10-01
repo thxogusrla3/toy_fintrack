@@ -12,7 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users", uniqueConstraints =  {
-        @UniqueConstraint(name = "uk_users_username", columnNames = "userName"),
+        @UniqueConstraint(name = "uk_users_username", columnNames = "user_name"),
         @UniqueConstraint(name = "uk_users_email", columnNames = "email")
 })
 public class User {
@@ -51,5 +51,6 @@ public class User {
         this.password = Objects.requireNonNull(passwordHash);
         this.email = Objects.requireNonNull(email);
         this.role = Role.USER;
+        this.createdAt = LocalDateTime.now();
     }
 }
