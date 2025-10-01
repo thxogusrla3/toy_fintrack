@@ -21,7 +21,7 @@ public class Transaction {
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private String userId;
 
     @Column(name="type", nullable = false)
     private String type;
@@ -37,9 +37,6 @@ public class Transaction {
 
     @Column(name = "memo")
     private String memo;
-
-    @Column(name = "account", nullable = false)
-    private String account;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
