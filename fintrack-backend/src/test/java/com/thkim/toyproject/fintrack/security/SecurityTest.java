@@ -66,7 +66,7 @@ public class SecurityTest {
     void login_then_access_protected() throws Exception {
         MvcResult loginResult = mvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"" + USERNAME + "\", \"password\":\"1\"}"))
+                        .content("{\"userName\":\"" + USERNAME + "\", \"password\":\"1\"}"))
                 .andExpect(status().isOk()) //200인지 체크, 401 이면 오류
                 .andReturn();
 
@@ -105,7 +105,7 @@ public class SecurityTest {
     void login_wrongPassword_401() throws Exception {
         mvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"" + USERNAME + "\", \"password\":\"WRONG\"}"))
+                        .content("{\"userName\":\"" + USERNAME + "\", \"password\":\"WRONG\"}"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -113,7 +113,7 @@ public class SecurityTest {
     void refresh_should_return_new_access_token() throws Exception {
         MvcResult login = mvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"" + USERNAME + "\", \"password\":\"" + PASSWORD + "\"}"))
+                .content("{\"userName\":\"" + USERNAME + "\", \"password\":\"" + PASSWORD + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists(REFRESH_TOKEN))
                 .andExpect(jsonPath("$.accessToken").exists())
@@ -152,7 +152,7 @@ public class SecurityTest {
     void logout_should_clear_refresh_cookie_and_invalidate() throws Exception {
         MvcResult login = mvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"" + USERNAME + "\", \"password\":\"" + PASSWORD + "\"}"))
+                .content("{\"userName\":\"" + USERNAME + "\", \"password\":\"" + PASSWORD + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists(REFRESH_TOKEN))
                 .andExpect(jsonPath("$.accessToken").exists())

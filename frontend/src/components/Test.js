@@ -17,10 +17,10 @@ function Test() {
             <h2>로그인</h2>
             <form >
                 <div>
-                    <label htmlFor="username">사용자 이름:</label>
+                    <label htmlFor="userName">사용자 이름:</label>
                     <input
                         type="text"
-                        id="username"
+                        id="userName"
                     />
                 </div>
                 <div>

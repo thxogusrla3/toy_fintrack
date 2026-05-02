@@ -8,6 +8,7 @@ import com.thkim.toyproject.fintrack.infrastructure.persistence.InMemoryRefreshT
 import com.thkim.toyproject.fintrack.infrastructure.security.JwtCookieUtil;
 import com.thkim.toyproject.fintrack.infrastructure.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -35,19 +36,27 @@ public class AuthController {
 
     private final long ACCESS_TTL = 60 * 15;             // 15m
     private final long REFRESH_TTL = 60L * 60 * 24 * 14;  // 14d
-    private final String COOKIE_DOMAIN = null;            // 필요 시 "example.com"
+
+    @Value("${app.cookie.refresh-token.domain:}")
+    private String refreshCookieDomain;
+
+    @Value("${app.cookie.refresh-token.secure:false}")
+    private boolean refreshCookieSecure;
+
+    @Value("${app.cookie.refresh-token.same-site:Lax}")
+    private String refreshCookieSameSite;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
+                new UsernamePasswordAuthenticationToken(req.getUserName(), req.getPassword())
         );
 
         String access = jwt.createAccessToken(auth.getName(), auth.getAuthorities(), ACCESS_TTL);
         String refresh = jwt.createRefreshToken(auth.getName(), REFRESH_TTL);
 
         store.saveOrRotate(auth.getName(), refresh);
-        ResponseCookie cookie = JwtCookieUtil.refreshCookie(refresh, REFRESH_TTL, COOKIE_DOMAIN);
+        ResponseCookie cookie = JwtCookieUtil.refreshCookie(refresh, REFRESH_TTL, cookieDomain(), refreshCookieSecure, refreshCookieSameSite);
 
         // 사용자의 권한(role) 정보를 추출
         String userRole = auth.getAuthorities().stream()
@@ -76,7 +85,7 @@ public class AuthController {
         String newRefresh = jwt.createRefreshToken(username, REFRESH_TTL);
         store.rotate(username, refresh, newRefresh);
 
-        ResponseCookie cookie = JwtCookieUtil.refreshCookie(newRefresh, REFRESH_TTL, COOKIE_DOMAIN);
+        ResponseCookie cookie = JwtCookieUtil.refreshCookie(newRefresh, REFRESH_TTL, cookieDomain(), refreshCookieSecure, refreshCookieSameSite);
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(Map.of("accessToken", newAccess));
     }
 
@@ -88,7 +97,7 @@ public class AuthController {
         }
         if (refresh != null) store.revoke(refresh);
 
-        ResponseCookie cookie = JwtCookieUtil.deleteRefreshCookie(COOKIE_DOMAIN);
+        ResponseCookie cookie = JwtCookieUtil.deleteRefreshCookie(cookieDomain(), refreshCookieSecure, refreshCookieSameSite);
         return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(Map.of("message","logged out"));
     }
 
@@ -96,6 +105,10 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public SignupResponse signup(@Valid @RequestBody SignupRequest signupRequest) {
         return authService.signup(signupRequest);
+    }
+
+    private String cookieDomain() {
+        return refreshCookieDomain == null || refreshCookieDomain.isBlank() ? null : refreshCookieDomain;
     }
 
 }

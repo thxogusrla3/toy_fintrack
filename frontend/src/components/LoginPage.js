@@ -4,7 +4,7 @@ import api, {tokenStore} from '../services/api'; // 생성한 axios 인스턴스
 import commonStyle from "../styles/commonStyles";
 
 function LoginPage({ onLoginSuccess }) {
-    const [username, setUsername] = useState('');
+    const [userName, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const goToRegister = () => {
@@ -15,7 +15,7 @@ function LoginPage({ onLoginSuccess }) {
         e.preventDefault();
 
         const response = await api.post("/auth/login", {
-            username,
+            userName,
             password,
         });
 
@@ -36,7 +36,7 @@ function LoginPage({ onLoginSuccess }) {
                 <input
                     type="text"
                     placeholder="아이디"
-                    value={username}
+                    value={userName}
                     onChange={(e) => setUsername(e.target.value)}
                     style={commonStyle.input}
                 />
