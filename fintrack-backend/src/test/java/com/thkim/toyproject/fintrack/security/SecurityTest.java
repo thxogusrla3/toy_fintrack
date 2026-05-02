@@ -2,8 +2,11 @@ package com.thkim.toyproject.fintrack.security;
 
 
 import com.jayway.jsonpath.JsonPath;
+import com.thkim.toyproject.fintrack.domain.users.UserRepository;
+import com.thkim.toyproject.fintrack.domain.users.model.User;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,11 +29,34 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+
+@SpringBootTest(properties = {
+        "spring.datasource.url=jdbc:h2:mem:fintrack-test;DB_CLOSE_DELAY=-1",
+        "spring.jpa.hibernate.ddl-auto=create-drop"
+})
 @AutoConfigureMockMvc
 public class SecurityTest {
     @Autowired
     MockMvc mvc;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+
+        User user = new User(
+                USERNAME,
+                passwordEncoder.encode(PASSWORD),
+                "thkim@test.com"
+        );
+
+        userRepository.save(user);
+    }
 
     private final String USERNAME = "thkim";
     private final String PASSWORD   = "1";
