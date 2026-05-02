@@ -36,7 +36,7 @@ public class AuthService {
         return new SignupResponse(
                 saveUser.getId(),
                 saveUser.getUserName(),
-                saveUser.getPassword()
+                saveUser.getEmail()
                 );
     }
 }
