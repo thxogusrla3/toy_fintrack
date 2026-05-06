@@ -23,6 +23,9 @@ public class StockCandleEntity {
     @Column(name = "stock_code", nullable = false, length = 20)
     private String stockCode;
 
+    @Column(name = "stock_name", length = 100)
+    private String stockName;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
@@ -47,13 +50,21 @@ public class StockCandleEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public static StockCandleEntity of(String stockCode, StockCandle candle) {
+    public static StockCandleEntity of(String stockCode, String stockName, StockCandle candle) {
         StockCandleEntity entity = new StockCandleEntity();
         entity.stockCode = stockCode;
+        entity.stockName = stockName;
         entity.date = candle.date();
         entity.createdAt = LocalDateTime.now();
         entity.update(candle);
         return entity;
+    }
+
+    public void update(String stockName, StockCandle candle) {
+        if (stockName != null && !stockName.isBlank()) {
+            this.stockName = stockName;
+        }
+        update(candle);
     }
 
     public void update(StockCandle candle) {

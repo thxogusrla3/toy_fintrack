@@ -35,3 +35,13 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Local secrets / run scripts ###
+.env
+.env.*
+run-kis-local.ps1
+application-local.properties
+application-*.local.properties
+
+### Frontend build debug artifacts ###
+src/main/resources/static/**/*.map

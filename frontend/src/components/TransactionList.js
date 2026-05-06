@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 
 function TransactionList() {
@@ -14,6 +15,9 @@ function TransactionList() {
     return (
         <div style={{ maxWidth: '800px', margin: '20px auto' }}>
             <h2>거래내역</h2>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+                <Link to="/stocks/screener" style={{ color: '#2f80ed', fontWeight: 700 }}>테마 스크리너</Link>
+            </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>

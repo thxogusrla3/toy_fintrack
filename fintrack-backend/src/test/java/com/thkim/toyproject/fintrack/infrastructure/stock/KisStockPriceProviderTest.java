@@ -43,6 +43,9 @@ class KisStockPriceProviderTest {
                         {
                           "rt_cd": "0",
                           "msg1": "정상처리 되었습니다.",
+                          "output1": {
+                            "hts_kor_isnm": "SK하이닉스"
+                          },
                           "output2": [
                             {
                               "stck_bsop_date": "20260102",
@@ -64,12 +67,14 @@ class KisStockPriceProviderTest {
                         }
                         """, MediaType.APPLICATION_JSON));
 
-        List<StockCandle> candles = provider.getDailyCandles(
+        var series = provider.getDailyCandleSeries(
                 "000660",
                 LocalDate.of(2026, 1, 1),
                 LocalDate.of(2026, 1, 2)
         );
 
+        List<StockCandle> candles = series.candles();
+        assertThat(series.stockName()).isEqualTo("SK하이닉스");
         assertThat(candles).hasSize(2);
         assertThat(candles.get(0).date()).isEqualTo(LocalDate.of(2026, 1, 1));
         assertThat(candles.get(0).close()).isEqualByComparingTo("101000");

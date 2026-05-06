@@ -1,6 +1,8 @@
 package com.thkim.toyproject.fintrack.domain.stock;
 
 import com.thkim.toyproject.fintrack.domain.stock.model.StockCandle;
+import com.thkim.toyproject.fintrack.domain.stock.model.StockCandleCollectResult;
+import com.thkim.toyproject.fintrack.domain.stock.model.StockCandleSeries;
 import com.thkim.toyproject.fintrack.domain.stock.model.StockCandleEntity;
 import com.thkim.toyproject.fintrack.domain.stock.model.TradeSignal;
 import com.thkim.toyproject.fintrack.domain.stock.repository.StockCandleRepository;
@@ -20,12 +22,12 @@ public class StockCandleCollectService {
     private final StockSignalService stockSignalService;
 
     @Transactional
-    public int collectDailyCandles(String stockCode, LocalDate from, LocalDate to) {
-        List<StockCandle> candles = stockPriceProvider.getDailyCandles(stockCode, from, to);
-        for (StockCandle candle : candles) {
-            upsert(stockCode, candle);
+    public StockCandleCollectResult collectDailyCandles(String stockCode, LocalDate from, LocalDate to) {
+        StockCandleSeries series = stockPriceProvider.getDailyCandleSeries(stockCode, from, to);
+        for (StockCandle candle : series.candles()) {
+            upsert(stockCode, series.stockName(), candle);
         }
-        return candles.size();
+        return new StockCandleCollectResult(series.stockName(), series.candles().size());
     }
 
     public TradeSignal analyzeStoredCandles(String stockCode, int limit) {
@@ -42,11 +44,11 @@ public class StockCandleCollectService {
         return stockCandleRepository.countByStockCode(stockCode);
     }
 
-    private void upsert(String stockCode, StockCandle candle) {
+    private void upsert(String stockCode, String stockName, StockCandle candle) {
         stockCandleRepository.findByStockCodeAndDate(stockCode, candle.date())
                 .ifPresentOrElse(
-                        entity -> entity.update(candle),
-                        () -> stockCandleRepository.save(StockCandleEntity.of(stockCode, candle))
+                        entity -> entity.update(stockName, candle),
+                        () -> stockCandleRepository.save(StockCandleEntity.of(stockCode, stockName, candle))
                 );
     }
 }

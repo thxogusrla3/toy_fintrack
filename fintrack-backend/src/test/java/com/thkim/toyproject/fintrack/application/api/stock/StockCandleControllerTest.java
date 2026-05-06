@@ -28,6 +28,7 @@ class StockCandleControllerTest {
                         .param("to", "2026-01-21"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockCode").value("000660"))
+                .andExpect(jsonPath("$.stockName").value("Mock Stock"))
                 .andExpect(jsonPath("$.collectedCount").value(21))
                 .andExpect(jsonPath("$.totalCount").value(21));
 

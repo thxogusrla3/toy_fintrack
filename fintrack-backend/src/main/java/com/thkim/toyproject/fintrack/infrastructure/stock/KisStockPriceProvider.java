@@ -2,6 +2,7 @@ package com.thkim.toyproject.fintrack.infrastructure.stock;
 
 import com.thkim.toyproject.fintrack.domain.stock.StockPriceProvider;
 import com.thkim.toyproject.fintrack.domain.stock.model.StockCandle;
+import com.thkim.toyproject.fintrack.domain.stock.model.StockCandleSeries;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -39,7 +40,7 @@ public class KisStockPriceProvider implements StockPriceProvider {
     }
 
     @Override
-    public List<StockCandle> getDailyCandles(String stockCode, LocalDate from, LocalDate to) {
+    public StockCandleSeries getDailyCandleSeries(String stockCode, LocalDate from, LocalDate to) {
         validateProperties();
 
         LocalDate endDate = to == null ? LocalDate.now() : to;
@@ -68,10 +69,12 @@ public class KisStockPriceProvider implements StockPriceProvider {
             throw new IllegalStateException("KIS daily chart request failed: " + body.msg1());
         }
 
-        return body.output2().stream()
+        List<StockCandle> candles = body.output2().stream()
                 .map(KisDailyCandle::toStockCandle)
                 .sorted((left, right) -> left.date().compareTo(right.date()))
                 .toList();
+        String stockName = body.output1() == null ? null : body.output1().stockName();
+        return new StockCandleSeries(stockName, candles);
     }
 
     private synchronized String accessToken() {
@@ -137,11 +140,17 @@ public class KisStockPriceProvider implements StockPriceProvider {
     record KisDailyChartResponse(
             @com.fasterxml.jackson.annotation.JsonProperty("rt_cd") String rtCd,
             String msg1,
+            KisDailySummary output1,
             List<KisDailyCandle> output2
     ) {
         KisDailyChartResponse {
             output2 = output2 == null ? List.of() : output2;
         }
+    }
+
+    record KisDailySummary(
+            @com.fasterxml.jackson.annotation.JsonProperty("hts_kor_isnm") String stockName
+    ) {
     }
 
     record KisDailyCandle(

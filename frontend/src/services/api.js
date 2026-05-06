@@ -24,7 +24,7 @@ export const tokenStore = {
 const api = axios.create({
   baseURL: "/api",         // 백엔드 프리픽스
   withCredentials: true,   // Refresh 쿠키 전달 필수!
-  timeout: 10000
+  timeout: 120000
 });
 
 // 요청 인터셉터: Access 헤더 부착

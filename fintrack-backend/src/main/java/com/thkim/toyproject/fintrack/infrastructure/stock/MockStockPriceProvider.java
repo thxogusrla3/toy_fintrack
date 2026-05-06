@@ -2,6 +2,7 @@ package com.thkim.toyproject.fintrack.infrastructure.stock;
 
 import com.thkim.toyproject.fintrack.domain.stock.StockPriceProvider;
 import com.thkim.toyproject.fintrack.domain.stock.model.StockCandle;
+import com.thkim.toyproject.fintrack.domain.stock.model.StockCandleSeries;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @ConditionalOnProperty(name = "app.stock.provider", havingValue = "mock", matchIfMissing = true)
 public class MockStockPriceProvider implements StockPriceProvider {
     @Override
-    public List<StockCandle> getDailyCandles(String stockCode, LocalDate from, LocalDate to) {
+    public StockCandleSeries getDailyCandleSeries(String stockCode, LocalDate from, LocalDate to) {
         LocalDate endDate = to == null ? LocalDate.now() : to;
         LocalDate startDate = endDate.minusDays(30);
         if (from != null && from.isAfter(startDate)) {
@@ -24,9 +25,10 @@ public class MockStockPriceProvider implements StockPriceProvider {
         LocalDate filterStartDate = startDate;
         LocalDate filterEndDate = endDate;
         List<StockCandle> candles = buySignalCandles(endDate);
-        return candles.stream()
+        List<StockCandle> filteredCandles = candles.stream()
                 .filter(candle -> !candle.date().isBefore(filterStartDate) && !candle.date().isAfter(filterEndDate))
                 .toList();
+        return new StockCandleSeries("Mock Stock", filteredCandles);
     }
 
     private List<StockCandle> buySignalCandles(LocalDate endDate) {

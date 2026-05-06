@@ -2,6 +2,7 @@ package com.thkim.toyproject.fintrack.application.api.stock;
 
 import com.thkim.toyproject.fintrack.application.api.stock.dto.StockCandleCollectResponse;
 import com.thkim.toyproject.fintrack.domain.stock.StockCandleCollectService;
+import com.thkim.toyproject.fintrack.domain.stock.model.StockCandleCollectResult;
 import com.thkim.toyproject.fintrack.domain.stock.model.TradeSignal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,10 +25,10 @@ public class StockCandleController {
         LocalDate endDate = to == null ? LocalDate.now() : to;
         LocalDate startDate = from == null ? endDate.minusDays(60) : from;
 
-        int collectedCount = stockCandleCollectService.collectDailyCandles(stockCode, startDate, endDate);
+        StockCandleCollectResult collectResult = stockCandleCollectService.collectDailyCandles(stockCode, startDate, endDate);
         long totalCount = stockCandleCollectService.countCandles(stockCode);
 
-        return new StockCandleCollectResponse(stockCode, collectedCount, totalCount);
+        return new StockCandleCollectResponse(stockCode, collectResult.stockName(), collectResult.collectedCount(), totalCount);
     }
 
     @GetMapping("/{stockCode}/signals")
