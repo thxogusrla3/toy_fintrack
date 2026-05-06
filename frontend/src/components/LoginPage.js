@@ -24,7 +24,7 @@ function LoginPage({ onLoginSuccess }) {
             if (onLoginSuccess) { 
                 onLoginSuccess();
             }
-            navigate("/transaction/list");
+            navigate("/stocks/screener");
         }
     };
 

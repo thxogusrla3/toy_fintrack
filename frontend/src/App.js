@@ -8,6 +8,7 @@ import AdminPage from "./components/AdminPage";
 import TransactionList from "./components/TransactionList";
 import StockPage from "./components/StockPage";
 import StockScreenerPage from "./components/StockScreenerPage";
+import StockScreenerRunPage from "./components/StockScreenerRunPage";
 import { bootstrapAuth } from './services/api';
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
           <Route path='/transaction/list' element={<TransactionList />} ></Route>
           <Route path='/stocks' element={<StockPage />} ></Route>
           <Route path='/stocks/screener' element={<StockScreenerPage />} ></Route>
+          <Route path='/stocks/screener/run' element={<StockScreenerRunPage />} ></Route>
 
           <Route path='/' element={<ProtectedRouteForRoot isLoggedIn={isLoggedIn} onLoginSuccess={handleLoginSuccess} />} ></Route>
       </Routes>

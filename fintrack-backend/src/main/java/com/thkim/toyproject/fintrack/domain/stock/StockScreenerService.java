@@ -11,12 +11,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class StockScreenerService {
-    private final StockThemeRegistry stockThemeRegistry;
+    private final StockMasterService stockMasterService;
+    private final StockThemeDiscoveryService stockThemeDiscoveryService;
     private final StockCandleCollectService stockCandleCollectService;
 
     @Value("${app.stock.screener.request-delay-ms:1200}")
@@ -26,7 +29,7 @@ public class StockScreenerService {
     private int maxRetries;
 
     public List<ThemeCandidate> findThemes() {
-        return stockThemeRegistry.findThemes();
+        return stockMasterService.findThemes();
     }
 
     public List<ThemeScreenerResult> run(String themeKey, LocalDate from, LocalDate to, int limit, boolean collect) {
@@ -35,7 +38,7 @@ public class StockScreenerService {
         LocalDate startDate = from == null ? endDate.minusDays(90) : from;
         int candleLimit = limit <= 0 ? 60 : Math.min(limit, 60);
 
-        List<ThemeCandidate> candidates = stockThemeRegistry.findCandidates(selectedThemeKey);
+        List<ThemeCandidate> candidates = findCandidates(selectedThemeKey);
         List<ThemeScreenerResult> results = new ArrayList<>();
         for (int i = 0; i < candidates.size(); i++) {
             results.add(screen(candidates.get(i), startDate, endDate, candleLimit, collect));
@@ -48,6 +51,35 @@ public class StockScreenerService {
                 .sorted(Comparator.comparing(ThemeScreenerResult::score).reversed()
                 .thenComparing(ThemeScreenerResult::themeName)
                 .thenComparing(ThemeScreenerResult::stockName))
+                .toList();
+    }
+
+    private List<ThemeCandidate> findCandidates(String themeKey) {
+        if (themeKey.startsWith("discovered-")) {
+            return stockThemeDiscoveryService.findStoredTheme(themeKey)
+                    .map(this::toCandidates)
+                    .orElseGet(List::of);
+        }
+        if ("all".equals(themeKey)) {
+            Map<String, ThemeCandidate> candidates = new LinkedHashMap<>();
+            for (ThemeCandidate candidate : stockMasterService.findCandidates("all")) {
+                candidates.put(candidate.stockCode(), candidate);
+            }
+            for (com.thkim.toyproject.fintrack.domain.stock.model.DiscoveredTheme theme : stockThemeDiscoveryService.findStoredThemes(30)) {
+                for (ThemeCandidate candidate : toCandidates(theme)) {
+                    candidates.putIfAbsent(candidate.stockCode(), candidate);
+                }
+            }
+            return List.copyOf(candidates.values());
+        }
+        return stockMasterService.findCandidates(themeKey);
+    }
+
+    private List<ThemeCandidate> toCandidates(com.thkim.toyproject.fintrack.domain.stock.model.DiscoveredTheme theme) {
+        String themeKey = "discovered-" + theme.themeKey();
+        return theme.stocks().stream()
+                .map(stock -> new ThemeCandidate(themeKey, theme.themeName(), stock.stockCode(), stock.stockName()))
+                .sorted(Comparator.comparing(ThemeCandidate::stockName))
                 .toList();
     }
 

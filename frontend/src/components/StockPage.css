@@ -41,6 +41,14 @@
   white-space: nowrap;
 }
 
+.stock-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .stock-grid {
   max-width: 1080px;
   margin: 0 auto;
@@ -97,7 +105,171 @@
   align-items: end;
 }
 
-.screener-controls label {
+.screener-run-controls {
+  max-width: 1080px;
+  margin: 0 auto 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(130px, 1fr)) minmax(180px, 1fr) minmax(130px, auto);
+  gap: 12px;
+  align-items: end;
+}
+
+.trend-panel {
+  max-width: 1080px;
+  margin: 0 auto 16px;
+}
+
+.discovery-panel {
+  max-width: 1080px;
+  margin: 0 auto 16px;
+}
+
+.trend-panel .stock-panel-header {
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.trend-panel .stock-panel-header p,
+.discovery-panel .stock-panel-header p {
+  margin: 4px 0 0;
+  color: #667085;
+  font-size: 14px;
+}
+
+.trend-search-toggle {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.trend-refresh-button {
+  min-height: 36px;
+  border: 1px solid #1d2733;
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #1d2733;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.trend-refresh-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.trend-list {
+  display: grid;
+  gap: 8px;
+}
+
+.trend-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 36px minmax(220px, 1fr) 64px minmax(220px, auto);
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  padding: 12px;
+  background: #ffffff;
+  color: #1d2733;
+  text-align: left;
+  cursor: pointer;
+}
+
+.trend-item:hover {
+  background: #f8fbff;
+  border-color: #c7dcff;
+}
+
+.trend-rank {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #eef2f6;
+  color: #344054;
+  font-weight: 800;
+}
+
+.trend-main strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.trend-main span,
+.trend-metrics {
+  color: #667085;
+  font-size: 12px;
+}
+
+.trend-score {
+  justify-self: end;
+  font-size: 24px;
+  font-weight: 800;
+  color: #2f80ed;
+}
+
+.trend-metrics {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.discovery-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.discovery-item {
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fbfcfe;
+}
+
+.discovery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.discovery-header strong {
+  font-size: 15px;
+}
+
+.discovery-header span {
+  color: #2f80ed;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.discovery-item p {
+  margin: 0;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.discovery-stocks {
+  margin-top: 6px !important;
+  color: #344054 !important;
+  font-weight: 700;
+}
+
+.discovery-evidence {
+  margin-top: 8px !important;
+  padding-top: 8px;
+  border-top: 1px solid #eaecf0;
+}
+
+.screener-controls label,
+.screener-run-controls label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -107,7 +279,8 @@
 }
 
 .screener-controls input,
-.screener-controls select {
+.screener-controls select,
+.screener-run-controls input {
   height: 40px;
   border: 1px solid #c8ced8;
   border-radius: 6px;
@@ -117,7 +290,8 @@
   font-size: 14px;
 }
 
-.screener-controls button {
+.screener-controls button,
+.screener-run-controls button {
   min-height: 40px;
   border: 1px solid #1d2733;
   border-radius: 6px;
@@ -127,7 +301,8 @@
   cursor: pointer;
 }
 
-.screener-controls button:disabled {
+.screener-controls button:disabled,
+.screener-run-controls button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
@@ -356,7 +531,35 @@
   .stock-form-row,
   .stock-actions,
   .stock-result,
-  .screener-controls {
+  .screener-controls,
+  .screener-run-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .trend-panel .stock-panel-header {
+    flex-direction: column;
+  }
+
+  .discovery-panel .stock-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .trend-search-toggle {
+    margin-left: 0;
+  }
+
+  .trend-item {
+    grid-template-columns: 32px 1fr;
+  }
+
+  .trend-score,
+  .trend-metrics {
+    justify-self: start;
+    grid-column: 2;
+  }
+
+  .discovery-list {
     grid-template-columns: 1fr;
   }
 
