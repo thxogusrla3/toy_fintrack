@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class FrontendController {
-    @GetMapping(value = {"/", "/{path:^(?!api|static|h2-console|actuator).*$}/**"})
+    @GetMapping(value = {"/", "/{path:^(?!api|static|h2-console|actuator|index\\.html).*$}/**"})
     public String forwardToIndex() {
         return "forward:/index.html";
     }

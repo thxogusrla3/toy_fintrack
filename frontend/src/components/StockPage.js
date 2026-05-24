@@ -84,7 +84,10 @@ function StockPage() {
           <h1>주식 데이터</h1>
           <p>종목코드로 일봉을 수집하고 저장된 데이터의 매매 신호를 확인합니다.</p>
         </div>
-        <Link className="stock-nav-link" to="/stocks/screener">테마 스크리너</Link>
+        <div className="stock-toolbar-actions">
+          <Link className="stock-nav-link" to="/stocks/theme-signals">테마 종목 신호</Link>
+          <Link className="stock-nav-link" to="/stocks/screener">테마 스크리너</Link>
+        </div>
       </section>
 
       <section className="stock-grid">

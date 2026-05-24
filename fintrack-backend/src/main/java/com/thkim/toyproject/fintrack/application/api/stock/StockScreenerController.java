@@ -1,6 +1,7 @@
 package com.thkim.toyproject.fintrack.application.api.stock;
 
 import com.thkim.toyproject.fintrack.domain.stock.StockScreenerService;
+import com.thkim.toyproject.fintrack.domain.stock.model.SignalType;
 import com.thkim.toyproject.fintrack.domain.stock.model.ThemeCandidate;
 import com.thkim.toyproject.fintrack.domain.stock.model.ThemeScreenerResult;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,21 @@ public class StockScreenerController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @RequestParam(defaultValue = "60") int limit,
-            @RequestParam(defaultValue = "true") boolean collect
+            @RequestParam(defaultValue = "true") boolean collect,
+            @RequestParam(required = false) SignalType signal
     ) {
-        return stockScreenerService.run(themeKey, from, to, limit, collect);
+        return stockScreenerService.run(themeKey, from, to, limit, collect, signal);
+    }
+
+    @GetMapping("/theme-signals")
+    public List<ThemeScreenerResult> themeSignals(
+            @RequestParam(defaultValue = "all") String themeKey,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(defaultValue = "60") int limit,
+            @RequestParam(defaultValue = "false") boolean collect,
+            @RequestParam(required = false) SignalType signal
+    ) {
+        return stockScreenerService.run(themeKey, from, to, limit, collect, signal);
     }
 }

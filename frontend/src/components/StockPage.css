@@ -114,6 +114,15 @@
   align-items: end;
 }
 
+.theme-signal-controls {
+  max-width: 1080px;
+  margin: 0 auto 16px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1.4fr) minmax(130px, 0.8fr) repeat(3, minmax(130px, 1fr)) minmax(180px, 1fr) minmax(110px, auto);
+  gap: 12px;
+  align-items: end;
+}
+
 .trend-panel {
   max-width: 1080px;
   margin: 0 auto 16px;
@@ -269,7 +278,8 @@
 }
 
 .screener-controls label,
-.screener-run-controls label {
+.screener-run-controls label,
+.theme-signal-controls label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -280,7 +290,9 @@
 
 .screener-controls input,
 .screener-controls select,
-.screener-run-controls input {
+.screener-run-controls input,
+.theme-signal-controls input,
+.theme-signal-controls select {
   height: 40px;
   border: 1px solid #c8ced8;
   border-radius: 6px;
@@ -291,7 +303,8 @@
 }
 
 .screener-controls button,
-.screener-run-controls button {
+.screener-run-controls button,
+.theme-signal-controls button {
   min-height: 40px;
   border: 1px solid #1d2733;
   border-radius: 6px;
@@ -302,7 +315,8 @@
 }
 
 .screener-controls button:disabled,
-.screener-run-controls button:disabled {
+.screener-run-controls button:disabled,
+.theme-signal-controls button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
@@ -331,6 +345,16 @@
   max-width: 1080px;
   margin: 0 auto;
   overflow-x: auto;
+}
+
+.theme-signal-results .stock-panel-header {
+  margin-bottom: 10px;
+}
+
+.result-count {
+  color: #667085;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .screener-table {
@@ -532,7 +556,8 @@
   .stock-actions,
   .stock-result,
   .screener-controls,
-  .screener-run-controls {
+  .screener-run-controls,
+  .theme-signal-controls {
     grid-template-columns: 1fr;
   }
 

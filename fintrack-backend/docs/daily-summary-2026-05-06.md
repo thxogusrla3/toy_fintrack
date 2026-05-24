@@ -15,6 +15,7 @@ application-*.local.properties
 src/main/resources/static/**/*.map
 ```
 
+
 주의 사항:
 
 - `application.properties`에는 JWT secret, DB password 같은 값이 있어 운영/개인 값이면 분리 필요.

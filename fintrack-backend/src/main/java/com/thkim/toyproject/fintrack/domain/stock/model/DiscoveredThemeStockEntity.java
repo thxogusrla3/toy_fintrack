@@ -34,6 +34,10 @@ public class DiscoveredThemeStockEntity {
         return entity;
     }
 
+    public void update(DiscoveredThemeStock stock) {
+        this.stockName = stock.stockName();
+    }
+
     public DiscoveredThemeStock toModel() {
         return new DiscoveredThemeStock(stockCode, stockName);
     }

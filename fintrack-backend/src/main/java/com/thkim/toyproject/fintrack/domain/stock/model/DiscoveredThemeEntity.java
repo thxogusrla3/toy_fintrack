@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -58,9 +60,25 @@ public class DiscoveredThemeEntity {
         this.mentionCount = theme.mentionCount();
         this.evidence = String.join("\n", theme.evidence());
         this.updatedAt = LocalDateTime.now();
-        this.stocks.clear();
+
+        Map<String, DiscoveredThemeStock> incomingStocks = new LinkedHashMap<>();
         for (DiscoveredThemeStock stock : theme.stocks()) {
-            this.stocks.add(DiscoveredThemeStockEntity.of(this, stock));
+            incomingStocks.put(stock.stockCode(), stock);
+        }
+
+        this.stocks.removeIf(stock -> !incomingStocks.containsKey(stock.getStockCode()));
+        Map<String, DiscoveredThemeStockEntity> existingStocks = new LinkedHashMap<>();
+        for (DiscoveredThemeStockEntity stock : this.stocks) {
+            existingStocks.put(stock.getStockCode(), stock);
+        }
+
+        for (DiscoveredThemeStock stock : incomingStocks.values()) {
+            DiscoveredThemeStockEntity existingStock = existingStocks.get(stock.stockCode());
+            if (existingStock == null) {
+                this.stocks.add(DiscoveredThemeStockEntity.of(this, stock));
+            } else {
+                existingStock.update(stock);
+            }
         }
     }
 

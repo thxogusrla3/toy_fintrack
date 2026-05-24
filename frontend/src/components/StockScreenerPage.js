@@ -89,7 +89,10 @@ function StockScreenerPage() {
           <h1>테마 탐색</h1>
           <p>최근 주도 테마와 자동 발견 후보를 확인하고, 선택한 테마의 스크리너를 실행합니다.</p>
         </div>
-        <Link className="stock-nav-link" to="/stocks">종목 상세</Link>
+        <div className="stock-toolbar-actions">
+          <Link className="stock-nav-link" to="/stocks/theme-signals">테마 종목 신호</Link>
+          <Link className="stock-nav-link" to="/stocks">종목 상세</Link>
+        </div>
       </section>
 
       <section className="stock-panel trend-panel">

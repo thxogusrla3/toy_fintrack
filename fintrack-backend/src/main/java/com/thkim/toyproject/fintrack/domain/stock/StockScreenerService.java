@@ -29,10 +29,24 @@ public class StockScreenerService {
     private int maxRetries;
 
     public List<ThemeCandidate> findThemes() {
-        return stockMasterService.findThemes();
+        Map<String, ThemeCandidate> themes = new LinkedHashMap<>();
+        for (ThemeCandidate theme : stockMasterService.findThemes()) {
+            themes.put(theme.themeKey(), theme);
+        }
+        for (com.thkim.toyproject.fintrack.domain.stock.model.DiscoveredTheme theme : stockThemeDiscoveryService.findStoredThemes(30)) {
+            String themeKey = "discovered-" + theme.themeKey();
+            themes.putIfAbsent(themeKey, new ThemeCandidate(themeKey, theme.themeName(), "", ""));
+        }
+        return themes.values().stream()
+                .sorted(Comparator.comparing(ThemeCandidate::themeName))
+                .toList();
     }
 
     public List<ThemeScreenerResult> run(String themeKey, LocalDate from, LocalDate to, int limit, boolean collect) {
+        return run(themeKey, from, to, limit, collect, null);
+    }
+
+    public List<ThemeScreenerResult> run(String themeKey, LocalDate from, LocalDate to, int limit, boolean collect, SignalType signal) {
         String selectedThemeKey = themeKey == null || themeKey.isBlank() ? "all" : themeKey;
         LocalDate endDate = to == null ? LocalDate.now() : to;
         LocalDate startDate = from == null ? endDate.minusDays(90) : from;
@@ -48,6 +62,7 @@ public class StockScreenerService {
         }
 
         return results.stream()
+                .filter(result -> signal == null || result.signal() == signal)
                 .sorted(Comparator.comparing(ThemeScreenerResult::score).reversed()
                 .thenComparing(ThemeScreenerResult::themeName)
                 .thenComparing(ThemeScreenerResult::stockName))
